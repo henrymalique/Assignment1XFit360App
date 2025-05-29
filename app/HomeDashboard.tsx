@@ -1,5 +1,11 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 
 const HomeDashboardScreen = () => {
@@ -7,8 +13,13 @@ const HomeDashboardScreen = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Welcome Back!</Text>
+      {/* Header with Avatar */}
+      <View style={styles.avatarRow}>
+        <View testID="avatar-circle" style={styles.avatar} />
+        <Text style={styles.welcome}>Welcome Back!</Text>
+      </View>
 
+      {/* Workout Summary Widgets */}
       <View style={styles.widget}>
         <Text style={styles.widgetTitle}>Weekly Workout Summary</Text>
         <Text style={styles.widgetValue}>4 sessions • 2 hrs 15 mins</Text>
@@ -21,9 +32,10 @@ const HomeDashboardScreen = () => {
 
       <View style={styles.widget}>
         <Text style={styles.widgetTitle}>AI Tip of the Day</Text>
-        <Text style={styles.widgetValue}>Try adding mobility work before your HIIT sessions!</Text>
+        <Text style={styles.widgetValue}>Try mobility work before your HIIT sessions!</Text>
       </View>
 
+      {/* Quick Access Section */}
       <Text style={styles.section}>Quick Access</Text>
 
       <TouchableOpacity
@@ -62,14 +74,25 @@ export default HomeDashboardScreen;
 const styles = StyleSheet.create({
   container: {
     padding: 24,
-    backgroundColor: '#F4F6F8',
+    backgroundColor: '#F1F5F9',
     flexGrow: 1,
   },
-  title: {
-    fontSize: 26,
-    fontWeight: 'bold',
+  avatarRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 24,
-    color: '#333',
+  },
+  avatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#007BFF',
+    marginRight: 12,
+  },
+  welcome: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#222',
   },
   widget: {
     backgroundColor: '#fff',
@@ -110,5 +133,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     textAlign: 'center',
+    fontWeight: '600',
   },
 });

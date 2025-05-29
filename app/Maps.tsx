@@ -94,6 +94,7 @@ const MapsScreen: React.FC = () => {
       region={initialRegion}
       showsUserLocation
       showsMyLocationButton
+      testID="map" // Added testID for the MapView
     >
       {markers.map((marker) => (
         <Marker
@@ -101,6 +102,7 @@ const MapsScreen: React.FC = () => {
           coordinate={marker.coordinate}
           title={marker.title}
           description={marker.description}
+          testID={`marker-${marker.id}`} // Added dynamic testID for the Marker
         />
       ))}
     </MapView>

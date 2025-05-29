@@ -19,7 +19,7 @@ type Badge = {
 };
 
 const ProgressScreen = () => {
-  const [workoutCount, setWorkoutCount] = useState(12); // Simulated value
+  const [workoutCount] = useState(12); // Simulated value
   const [badges, setBadges] = useState<Badge[]>([]);
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [showStats, setShowStats] = useState(false); // For Steps + Heart Points

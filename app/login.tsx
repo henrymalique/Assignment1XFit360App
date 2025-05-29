@@ -1,142 +1,162 @@
+import React, { useState } from 'react';
+import {
+  View, Text, TextInput, StyleSheet, Image, TouchableOpacity
+} from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { View, TextInput, Button, Text, StyleSheet, SafeAreaView } from 'react-native';
-import { useState } from 'react';
 import { useRouter } from 'expo-router';
-
-//firebase setup
 import { initializeApp } from 'firebase/app';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, deleteUser } from 'firebase/auth';
-
-
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
 import { firebaseConfig } from '../firebase';
 
-//initialize firebase app and auth
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 export default function LoginScreen() {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [status, setStatus] = useState('Welcome!');
-  const router = useRouter(); 
+  const [status, setStatus] = useState('');
 
-  let debugCounter = 0;
-
-  function debug(tag: string, message: string, error?: any) {
-    console.log(`${tag} No.${debugCounter}: ${message}`);
+  const debug = (tag: string, msg: string, error?: any) => {
+    console.log(`${tag}: ${msg}`);
     if (error) console.error(error);
-    debugCounter++;
-  }
+  };
 
-  async function loginUser() {
+  const loginUser = async () => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-      setStatus(`Logged in as: ${user.email}`);
-      debug('Login', `Success: ${user.email}`);
-      router.replace('/HomeDashboard'); 
+      setStatus(`Welcome back, ${userCredential.user.email}`);
+      router.replace('/HomeDashboard');
     } catch (error: any) {
       setStatus('Login failed');
-      debug('Login Error', error.message, error);
+      debug('Login', error.message, error);
     }
-  }
+  };
 
-  async function registerUser() {
+  const registerUser = async () => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-      setStatus(`Account created: ${user.email}`);
-      debug('Register', `Success: ${user.email}`);
+      setStatus(`Welcome, ${userCredential.user.email}`);
       router.replace('/HomeDashboard');
     } catch (error: any) {
       setStatus('Registration failed');
-      debug('Register Error', error.message, error);
+      debug('Register', error.message, error);
     }
-  }
-
-  async function logoutUser() {
-    try {
-      await signOut(auth);
-      setStatus('Signed out successfully');
-      debug('Logout', 'Success');
-    } catch (error: any) {
-      setStatus('Logout failed');
-      debug('Logout Error', error.message, error);
-    }
-  }
-
-  async function deleteAccount() {
-    try {
-      if (auth.currentUser) {
-        await deleteUser(auth.currentUser);
-        setStatus('User deleted');
-        debug('Delete', 'Success');
-      } else {
-        setStatus('No user to delete');
-        debug('Delete', 'No user logged in');
-      }
-    } catch (error: any) {
-      setStatus('Delete failed');
-      debug('Delete Error', error.message, error);
-    }
-  }
+  };
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={styles.header}>
-        <View style={styles.colContainer}>
-          <View style={styles.rowContainer}>
-            <Text>{status}</Text>
-          </View>
+        <View style={styles.overlay}>
+          <Image
+            source={require('../assets/xfit360_logo.png')} // Logo file placed in assets folder
+            style={styles.logo}
+          />
+          <Text style={styles.title}>XFit360</Text>
+          <Text style={styles.subtitle}>Fitness Starts Here</Text>
 
-          <View style={styles.rowContainer}>
-            <TextInput
-              style={styles.sUser}
-              placeholder="Email"
-              value={email}
-              onChangeText={setEmail}
-              autoCapitalize="none"
-              keyboardType="email-address"
-            />
-            <TextInput
-              style={styles.sUser}
-              placeholder="Password"
-              value={password}
-              secureTextEntry
-              onChangeText={setPassword}
-            />
-          </View>
+          <Text style={styles.status}>{status}</Text>
 
-          <View style={styles.rowContainer}>
-            <Button title="Login" onPress={loginUser} />
-            <Button title="Register" onPress={registerUser} />
-            <Button title="Logout" onPress={logoutUser} />
-            <Button title="Delete" onPress={deleteAccount} />
-          </View>
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            placeholderTextColor="#ccc"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            placeholderTextColor="#ccc"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
+
+          <TouchableOpacity style={styles.button} onPress={loginUser}>
+            <Text style={styles.buttonText}>Login</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.buttonOutline} onPress={registerUser}>
+            <Text style={styles.buttonOutlineText}>Register</Text>
+          </TouchableOpacity>
         </View>
-      </SafeAreaView>
     </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
-    padding: 40,
-    marginBottom: 8,
+  background: {
+    flex: 1,
   },
-  rowContainer: {
-    flexDirection: 'row',
+  overlay: {
+    flex: 1,
+    padding: 24,
+    justifyContent: 'center',
     alignItems: 'center',
-    gap: 30,
+    backgroundColor: 'rgba(0,0,0,0.6)',
   },
-  colContainer: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: 30,
+  logo: {
+    width: 100,
+    height: 100,
+    marginBottom: 12,
   },
-  sUser: {
-    borderBottomWidth: 1,
-    width: 140,
-    padding: 8,
+  title: {
+    fontSize: 28,
+    color: '#fff',
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#ccc',
+    marginBottom: 20,
+  },
+  status: {
+    color: '#f88',
+    marginBottom: 10,
+  },
+  input: {
+    width: '90%',
+    padding: 12,
+    borderRadius: 8,
+    backgroundColor: '#222',
+    color: '#fff',
+    marginBottom: 12,
+    fontSize: 16,
+  },
+  button: {
+    backgroundColor: '#00c851',
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 8,
+    marginTop: 6,
+    width: '90%',
+  },
+  buttonText: {
+    textAlign: 'center',
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 16,
+  },
+  buttonOutline: {
+    borderColor: '#00c851',
+    borderWidth: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 8,
+    marginTop: 12,
+    width: '90%',
+  },
+  buttonOutlineText: {
+    textAlign: 'center',
+    color: '#00c851',
+    fontWeight: '600',
+    fontSize: 16,
   },
 });
